@@ -1,0 +1,18 @@
+spring:
+  datasource:
+    url: jdbc:h2:tcp://localhost/E:/Development/workspaces/h2db
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+#        show_sql: true # 표준출력
+        format_sql: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug # logger query 출력
+#    org.hibernate.type: trace # logger parameter 출력
