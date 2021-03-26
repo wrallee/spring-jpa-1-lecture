@@ -1,12 +1,12 @@
 package jpabook.jpashop.service;
 
+import jpabook.jpashop.controller.ItemForm;
 import jpabook.jpashop.domain.item.Item;
 import jpabook.jpashop.repository.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
 import java.util.List;
 
 @Service
@@ -17,7 +17,7 @@ public class ItemService {
     private final ItemRepository itemRepository;
 
     @Transactional
-    public void saveitem(Item item) {
+    public void saveItem(Item item) {
         itemRepository.save(item);
     }
 
@@ -27,5 +27,11 @@ public class ItemService {
 
     public Item findOne(Long itemId) {
         return itemRepository.findOne(itemId);
+    }
+
+    @Transactional
+    public void updateItem(ItemForm form) {
+        Item findItem = itemRepository.findOne(form.getId());
+        findItem.changeItem(form.getName(), form.getPrice(), form.getStockQuantity());
     }
 }
