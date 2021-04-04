@@ -1,6 +1,7 @@
 package jpabook.jpashop.repository;
 
 import jpabook.jpashop.domain.Order;
+import jpabook.jpashop.repository.order.simplequery.OrderSimpleQueryDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -61,12 +62,27 @@ public class OrderRepository {
         ).getResultList();
     }
 
-    public List<OrderSimpleQueryDto> findOrderDtos() {
+    public List<Order> findAllWithMemberDelivery(int offset, int limit) {
         return em.createQuery(
-                "select new jpabook.jpashop.repository.OrderSimpleQueryDto(o.id, m.name, o.orderDate, o.status, d.address)" +
-                        " from Order o" +
-                        " join o.member m" +
-                        " join o.delivery d", OrderSimpleQueryDto.class)
+                "select o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery ", Order.class)
+                .setFirstResult(offset)
+                .setMaxResults(limit)
+                .getResultList();
+    }
+
+    public List<Order> findAllWithItem() {
+        return em.createQuery(
+                // distinct를 넣으면 JPA가 쿼리에 distinct를 넣고 중복 "o"도 제거해준다.
+                "select distinct o from Order o" +
+                        " join fetch o.member m" +
+                        " join fetch o.delivery d" +
+                        " join fetch o.orderItems oi" +
+                        " join fetch oi.item i", Order.class)
+                // 컬렉션에 대해 fetch join을 했으므로 아래 페이징은 메모리에서 이루어진다
+                .setFirstResult(1)
+                .setMaxResults(100)
                 .getResultList();
     }
 }
